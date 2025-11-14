@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TU PUEDES — Red social de aprendizaje (prototipo)</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#94a3b8;--accent:#7c3aed;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:linear-gradient(180deg,#071028 0%, #08111b 100%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+    header{display:flex;align-items:center;gap:20px;padding:18px 28px;border-bottom:1px solid rgba(255,255,255,0.03);position:sticky;top:0;background:linear-gradient(180deg, rgba(7,16,40,0.6), rgba(7,16,40,0.4));backdrop-filter: blur(6px);z-index:5}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:grid;place-items:center;font-weight:700;color:white}
+    .brand h1{font-size:16px;margin:0}
+    nav{margin-left:auto;display:flex;gap:12px}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .container{max-width:1100px;margin:28px auto;display:grid;grid-template-columns:280px 1fr 320px;gap:20px;padding:0 20px}
+
+    /* LEFT SIDEBAR */
+    .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .profile-compact{display:flex;gap:12px;align-items:center}
+    .avatar{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:grid;place-items:center;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+    .skills{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+    .skill{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px;font-size:13px}
+    .menu{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+    .menu button{display:flex;align-items:center;gap:10px}
+
+    /* MAIN FEED */
+    .feed{display:flex;flex-direction:column;gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+
+    .composer{display:flex;gap:12px;align-items:flex-start}
+    .composer textarea{flex:1;background:transparent;border:1px dashed rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:inherit;min-height:70px}
+    .composer .controls{display:flex;flex-direction:column;gap:8px}
+    .small{font-size:13px}
+
+    .post{display:flex;gap:14px}
+    .post .meta{font-size:13px;color:var(--muted)}
+    .post .content{margin-top:8px}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);font-size:13px}
+
+    /* RIGHT SIDEBAR */
+    .rightbar{display:flex;flex-direction:column;gap:12px}
+    .progress{display:flex;flex-direction:column;gap:10px}
+    .progress .bar{height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
+    .progress .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#06b6d4);width:30%}
+
+    /* Grid for "Worlds" */
+    .worlds{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .world{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);text-align:center}
+
+    footer{max-width:1100px;margin:20px auto;color:var(--muted);font-size:13px;padding:0 20px}
+
+    /* Responsive */
+    @media (max-width:1000px){.container{grid-template-columns:1fr;gap:12px}.rightbar{order:3}.sidebar{order:2}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">AL</div>
+      <div>
+        <h1>TU PUEDES</h1>
+        <div class="muted">Red social para aprender haciendo</div>
+      </div>
+    </div>
+
+    <nav>
+      <button class="btn" onclick="openModal('newProject')">+ Nuevo proyecto</button>
+      <button class="btn" onclick="openModal('joinChallenge')">Retos</button>
+      <button class="btn" onclick="toggleTheme()">Tema</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <aside class="sidebar">
+      <div class="profile-compact">
+        <div class="avatar" id="myAvatar">E</div>
+        <div>
+          <div style="font-weight:700">Esteban</div>
+          <div class="muted">Arequipa · Interesado en: Programación, Video</div>
+        </div>
+      </div>
+
+      <div class="skills" id="mySkills">
+        <div class="skill">Programación</div>
+        <div class="skill">Edición</div>
+        <div class="skill">Inglés</div>
+      </div>
+
+      <div class="menu">
+        <button class="btn" onclick="showSection('feed')">Feed</button>
+        <button class="btn" onclick="showSection('miProgreso')">Mi progreso</button>
+        <button class="btn" onclick="showSection('worlds')">Mundos</button>
+        <button class="btn" onclick="showSection('comunidad')">Comunidad</button>
+      </div>
+
+      <div style="margin-top:16px" class="small muted">Tu meta actual</div>
+      <div class="card">
+        <div style="font-weight:700">Reto: 30 días de edición</div>
+        <div class="muted small">Día 6 · 15 min/día</div>
+        <div class="progress">
+          <div class="bar"><i style="width:20%"></i></div>
+          <div class="small muted">20% completado</div>
+        </div>
+      </div>
+
+    </aside>
+
+    <section class="feed" id="feed">
+      <div class="card composer">
+        <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:grid;place-items:center;font-weight:700">E</div>
+        <div style="flex:1">
+          <textarea id="postText" placeholder="Sube un microproyecto: ¿qué aprendiste hoy? (video, imagen, demo) "></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div class="small muted">Comparte un avance práctico — recibe retroalimentación</div>
+            <div>
+              <button class="btn" onclick="publishPost()">Publicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="postsArea">
+        <!-- Posts serán inyectados por JS -->
+      </div>
+
+    </section>
+
+    <aside class="rightbar">
+      <div class="card">
+        <div style="font-weight:700">Mi progreso</div>
+        <div class="muted small">Horas esta semana</div>
+        <canvas id="chart" width="300" height="100" style="width:100%;height:80px"></canvas>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <div class="small muted">Nivel: Intermedio</div>
+          <div class="small muted">Insignias: 3</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700">Mundos</div>
+        <div class="worlds" id="worlds">
+          <div class="world">Programación</div>
+          <div class="world">Edición de Video</div>
+          <div class="world">Cocina</div>
+          <div class="world">Música</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700">Próximos Mentorings</div>
+        <div class="muted small">Martes 7pm — Edición con Clara</div>
+        <div class="muted small">Miércoles 6pm — Git básico</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    TU PUEDES — Prototipo web · Diseñado para aprendizaje activo y colaborativo · (demo)
+  </footer>
+
+  <!-- MODALES SIMPLES -->
+  <div id="modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:50">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6)"></div>
+    <div style="width:92%;max-width:720px;background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);position:relative">
+      <div id="modalContent"></div>
+      <button onclick="closeModal()" style="position:absolute;right:12px;top:12px" class="btn">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    // --- Datos demo ---
+    const demoPosts = [
+      {id:1,author:'María',skill:'Edición de Video',time:'2h',text:'Recorte y color básico. Subí el antes/después',likes:12,comments:3},
+      {id:2,author:'Andrés',skill:'Programación',time:'4h',text:'Construí mi primera API REST con Node.js',likes:20,comments:5}
+    ];
+
+    function renderPosts(){
+      const area = document.getElementById('postsArea');
+      area.innerHTML='';
+      const posts = JSON.parse(localStorage.getItem('apLab_posts')||'null') || demoPosts;
+      posts.slice().reverse().forEach(p=>{
+        const card = document.createElement('div'); card.className='card post';
+        card.innerHTML = `
+          <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:grid;place-items:center;font-weight:700">${p.author[0]}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700">${p.author} <span class='muted small'>· ${p.skill}</span></div>
+                <div class='muted small'>${p.time} atrás</div>
+              </div>
+              <div class='muted small'>Insignias</div>
+            </div>
+            <div class='content'>${escapeHtml(p.text)}</div>
+            <div class='actions'>
+              <button class='pill' onclick="suggest('${p.id}')">Sugerir mejora</button>
+              <button class='pill' onclick="openModal('comments', ${p.id})">Comentarios (${p.comments})</button>
+            </div>
+          </div>
+        `;
+        area.appendChild(card);
+      })
+    }
+
+    function escapeHtml(str){ return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+    function publishPost(){
+      const txt = document.getElementById('postText').value.trim();
+      if(!txt){alert('Escribe un avance o sube un demo.');return}
+      const posts = JSON.parse(localStorage.getItem('apLab_posts')||'null') || demoPosts;
+      posts.push({id:Date.now(),author:'Tú',skill:'General',time:'0m',text:txt,likes:0,comments:0});
+      localStorage.setItem('apLab_posts', JSON.stringify(posts));
+      document.getElementById('postText').value='';
+      renderPosts();
+    }
+
+    function suggest(id){ alert('Función sugerir: deja un comentario concreto. (Demo)') }
+
+    function openModal(type, id){
+      document.getElementById('modal').style.display='flex';
+      const c = document.getElementById('modalContent');
+      if(type==='newProject'){
+        c.innerHTML = `
+          <h2>Crear nuevo microproyecto</h2>
+          <p class='muted small'>Sigue la regla: objetivo claro + evidencia (foto/video/demo) + 2 cosas que mejorar.</p>
+          <input id='projTitle' placeholder='Título' style='width:100%;padding:8px;margin-top:6px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04)' />
+          <textarea id='projDesc' placeholder='Describe tu avance' style='width:100%;height:120px;margin-top:6px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04)'></textarea>
+          <div style='display:flex;justify-content:flex-end;margin-top:8px'><button class='btn' onclick="createProject()">Crear proyecto</button></div>
+        `;
+      } else if(type==='joinChallenge'){
+        c.innerHTML = `<h2>Retos activos</h2><div class='muted small'>Elige un reto:</div><ul><li>7 días de edición</li><li>15 días de Python</li><li>30 días: Portfolio</li></ul><div style='display:flex;justify-content:flex-end;margin-top:8px'><button class='btn' onclick="closeModal()">Unirme</button></div>`;
+      } else if(type==='comments'){
+        const posts = JSON.parse(localStorage.getItem('apLab_posts')||'null') || demoPosts;
+        const p = posts.find(x=>x.id==id)||{};
+        c.innerHTML = `<h2>Comentarios — ${p.author||'---'}</h2><div class='muted small'>Demo: deja una crítica constructiva.</div><textarea id='commentText' style='width:100%;height:120px;margin-top:6px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04)'></textarea><div style='display:flex;justify-content:flex-end;margin-top:8px'><button class='btn' onclick="addComment(${id})">Enviar</button></div>`;
+      }
+    }
+    function closeModal(){ document.getElementById('modal').style.display='none' }
+
+    function createProject(){
+      const t=document.getElementById('projTitle').value.trim();
+      const d=document.getElementById('projDesc').value.trim();
+      if(!t||!d){alert('Completa título y descripción.');return}
+      publishPostFromModal(t+' — '+d);
+      closeModal();
+    }
+    function publishPostFromModal(text){
+      const posts = JSON.parse(localStorage.getItem('apLab_posts')||'null') || demoPosts;
+      posts.push({id:Date.now(),author:'Tú',skill:'Proyecto',time:'0m',text:text,likes:0,comments:0});
+      localStorage.setItem('apLab_posts', JSON.stringify(posts)); renderPosts();
+    }
+
+    function addComment(postId){
+      const ct = document.getElementById('commentText').value.trim();
+      if(!ct){alert('Escribe un comentario');return}
+      const posts = JSON.parse(localStorage.getItem('apLab_posts')||'null') || demoPosts;
+      const p = posts.find(x=>x.id==postId); if(p) p.comments = (p.comments||0)+1; localStorage.setItem('apLab_posts', JSON.stringify(posts)); renderPosts(); closeModal();
+    }
+
+    // Simple chart: horas por día (demo)
+    function drawChart(){
+      const c = document.getElementById('chart'); const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+      const data = [1,2,1.5,3,2,0.5,1]; // horas
+      const max = Math.max(...data);
+      const pad = 20; const w = c.width - pad*2; const h = c.height - pad*2; const step = w/(data.length-1);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.beginPath();
+      data.forEach((v,i)=>{ const x=pad + i*step; const y = pad + (1 - v/max)*h; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }); ctx.stroke();
+      data.forEach((v,i)=>{ const x=pad + i*step; const y = pad + (1 - v/max)*h; ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill(); });
+    }
+
+    function showSection(id){ // demo, only toggles some parts
+      const feed = document.getElementById('feed'); const sidebar = document.querySelector('.sidebar');
+      if(id==='miProgreso'){ alert('Sección Mi progreso — aquí se mostraría historial detallado (demo)') }
+      if(id==='worlds'){ alert('Sección Mundos — acceso a desafíos, cursos cortos y mentores (demo)') }
+      if(id==='comunidad'){ alert('Sección Comunidad — foros y salas de colaboración (demo)') }
+    }
+
+    function toggleTheme(){ document.body.classList.toggle('light'); alert('Tema alternativo (demo)') }
+
+    // Init
+    renderPosts(); drawChart();
+  </script>
+</body>
+</html>
